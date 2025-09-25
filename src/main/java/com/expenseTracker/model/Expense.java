@@ -15,11 +15,19 @@ public class Expense {
         time = LocalDateTime.now();
     }
 
-    public Expense(int id, String description, LocalDateTime time, String category, int income, int expense) {
+    public Expense(String description, String category, int income, int expense) {
+        this.description = description;
+        this.category = category;
+        this.income = income;
+        this.expense = expense;
+        this.time = LocalDateTime.now();
+    }
+
+    public Expense(int id, String description, String category, LocalDateTime time, int income, int expense) {
         this.id = id;
         this.description = description;
-        this.time = time;
         this.category = category;
+        this.time = time;
         this.income = income;
         this.expense = expense;
     }
@@ -71,6 +79,6 @@ public class Expense {
     }
 
     public void setExpense(int expense) {
-      this.expense = expense;
+        this.expense = expense;
     }
 }
