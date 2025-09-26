@@ -365,10 +365,29 @@ public class ExpenseAppGUI extends JFrame {
 
     public void removeCategory() {
         String categoryName = JOptionPane.showInputDialog(this, "Enter category name to delete:", "Add New Category", JOptionPane.QUESTION_MESSAGE);
+        if(categoryName.trim().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Please enter a valid category", "Deletion Error", JOptionPane.WARNING_MESSAGE);
+            // return;
+        }
 
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this category?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
+        if(!categoryName.trim().isEmpty()){
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this category?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
+                if(confirm == JOptionPane.YES_OPTION){
+                    boolean categoryRemoved = expenseDAO.deleteCategory(categoryName.trim());
+                    if(categoryRemoved){
+                        JOptionPane.showMessageDialog(this, "Category Deleted Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadCategory();
+                        loadExpenses();
 
-        boolean isCategoryDeleted = expenseDAO.deleteCategory(categoryName);
+                        // categoryCombo.setSelectedItem(categoryName.trim());
+                    }
+                }
+            }
+            catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error removing category: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
 
     }
 

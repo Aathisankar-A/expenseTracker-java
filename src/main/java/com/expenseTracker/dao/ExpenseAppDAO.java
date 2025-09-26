@@ -105,6 +105,10 @@ public class ExpenseAppDAO {
     }
 
     public boolean deleteCategory(String category) throws  SQLException {
+        if(!deleteExpenseByCategory(category)){
+            return false;
+        }
+        
         try (Connection conn = DatabaseConnection.getDBConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_CATEGORY)) {
             stmt.setString(1, category);
@@ -112,6 +116,18 @@ public class ExpenseAppDAO {
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         }
+    }
+
+    public boolean deleteExpenseByCategory(String category) throws SQLException {
+        try (Connection conn = DatabaseConnection.getDBConnection();
+            PreparedStatement stmt = conn.prepareStatement(DELETE_EXPENSES_BY_CATEGORY)) {
+
+            stmt.setString(1, category);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+
     }
 
     private Expense getExpenseRow(ResultSet rs) throws SQLException {
