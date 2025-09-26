@@ -22,6 +22,9 @@ public class ExpenseAppDAO {
     private static final String INSERT_CATEGORY = "INSERT INTO categories (name) VALUES (?)";
     
     private static final String DELETE_EXPENSE = "DELETE FROM expenses WHERE id = ?";
+
+    private static final String DELETE_EXPENSES_BY_CATEGORY = "DELETE e FROM expenses e JOIN categories c ON e.category_id = c.id WHERE c.name = ?";
+    private static final String DELETE_CATEGORY = "DELETE FROM categories WHERE name = ?";
     
     private static final String GET_CATEGORY_ID_BY_NAME = "SELECT id FROM categories WHERE name = ?";
 
@@ -40,17 +43,17 @@ public class ExpenseAppDAO {
     }
 
     public int addCategory(String categoryName) throws SQLException {
-        try (Connection conn = DatabaseConnection.getDBConnection();
+        try(Connection conn = DatabaseConnection.getDBConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_CATEGORY, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, categoryName);
             
             int rowsAffected = stmt.executeUpdate();
             
-            if (rowsAffected == 0) {
+            if(rowsAffected == 0) {
                 throw new SQLException("Creating category failed, no rows affected.");
             }
 
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            try(ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);
                 } else {
@@ -60,8 +63,8 @@ public class ExpenseAppDAO {
         }
     }
 
-    public int createExpense(Expense expense) throws SQLException {
-        try (Connection conn = DatabaseConnection.getDBConnection();
+    public void createExpense(Expense expense) throws SQLException {
+        try(Connection conn = DatabaseConnection.getDBConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_EXPENSE, Statement.RETURN_GENERATED_KEYS)) {
             
             int categoryId = getCategoryIdByName(expense.getCategory());
@@ -77,17 +80,17 @@ public class ExpenseAppDAO {
             
             int rowsAffected = stmt.executeUpdate();
             
-            if (rowsAffected == 0) {
+            if(rowsAffected == 0) {
                 throw new SQLException("Creating expense failed, no rows affected.");
             }
 
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Creating expense failed, no ID obtained.");
-                }
-            }
+            // try(ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            //     if (generatedKeys.next()) {
+            //         return generatedKeys.getInt(1);
+            //     } else {
+            //         throw new SQLException("Creating expense failed, no ID obtained.");
+            //     }
+            // }
         }
     }
 
@@ -95,6 +98,16 @@ public class ExpenseAppDAO {
         try (Connection conn = DatabaseConnection.getDBConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_EXPENSE)) {
             stmt.setInt(1, expenseId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public boolean deleteCategory(String category) throws  SQLException {
+        try (Connection conn = DatabaseConnection.getDBConnection();
+             PreparedStatement stmt = conn.prepareStatement(DELETE_CATEGORY)) {
+            stmt.setString(1, category);
             
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;

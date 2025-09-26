@@ -23,6 +23,7 @@ public class ExpenseAppGUI extends JFrame {
     private JButton addExpenseButton;
     private JButton addIncomeButton;
     private JButton removeButton;
+    private JButton removeCategoryButton;
     private JComboBox<String> categoryCombo;
     private JComboBox<String> filterCombo;
     private JButton filterButton;
@@ -60,7 +61,8 @@ public class ExpenseAppGUI extends JFrame {
 
         addExpenseButton = new JButton("Add as Expense");
         addIncomeButton = new JButton("Add as Income");
-        removeButton = new JButton("Remove");
+        removeButton = new JButton("Remove Expense");
+        removeCategoryButton = new JButton("Remove Category");
         filterButton = new JButton("Filter");
         showAllButton = new JButton("Show All");
 
@@ -122,6 +124,7 @@ public class ExpenseAppGUI extends JFrame {
         buttonPanel.add(addExpenseButton);
         buttonPanel.add(addIncomeButton);
         buttonPanel.add(removeButton);
+        buttonPanel.add(removeCategoryButton);
         
         inputPanel.add(buttonPanel, gbc);
 
@@ -203,6 +206,10 @@ public class ExpenseAppGUI extends JFrame {
             removeExpense();
         });
 
+        removeCategoryButton.addActionListener((e) -> {
+            removeCategory();
+        });
+
         filterButton.addActionListener((e) -> {
             filterByCategory();
         });
@@ -281,9 +288,8 @@ public class ExpenseAppGUI extends JFrame {
 
             clearInputFields();
             loadExpenses();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid number for amount", "Validation Error", JOptionPane.WARNING_MESSAGE);
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error Adding expense: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -323,8 +329,6 @@ public class ExpenseAppGUI extends JFrame {
 
             clearInputFields();
             loadExpenses();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid number for amount", "Validation Error", JOptionPane.WARNING_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error Adding income: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -357,6 +361,15 @@ public class ExpenseAppGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Error removing expense: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    public void removeCategory() {
+        String categoryName = JOptionPane.showInputDialog(this, "Enter category name to delete:", "Add New Category", JOptionPane.QUESTION_MESSAGE);
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this category?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
+
+        boolean isCategoryDeleted = expenseDAO.deleteCategory(categoryName);
+
     }
 
     private void filterByCategory() {
