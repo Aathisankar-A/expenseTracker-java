@@ -70,6 +70,9 @@ A Java Swing-based desktop application for tracking personal expenses and income
 - `src/main/java/com/expenseTracker/util/DatabaseConnection.java`: Database connection utility.
 - `pom.xml`: Maven configuration file.
 
+## Screenshots
+![Demo image](readme-images/demo-screenshot1.png)
+
 ## Dependencies
 
 - MySQL Connector/J: For MySQL database connectivity.
